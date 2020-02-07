@@ -4,6 +4,10 @@ import { Link } from 'react-router-dom';
 import './styles/Badges.css';
 import confLogo from '../images/badge-header.svg';
 import BadgesList from '../components/BadgesList';
+import PageLoading from '../components/PageLoading';
+import PageError from '../components/PageError';
+
+import api from '../api';
 
 class Badges extends React.Component {
     constructor(props) {
@@ -11,14 +15,15 @@ class Badges extends React.Component {
         console.log('1.Constructor()');
 
         this.state = {
+            loading: true,
+            error: null,
             data: [], 
          }
     }
 
     componentDidMount() {
-        console.log('3.Mount()');
 
-        this.timeoutId = setTimeout(() => {
+    /*    this.timeoutId = setTimeout(() => {
             this.setState ({
                 data: [
                  {
@@ -50,7 +55,29 @@ class Badges extends React.Component {
                  }
              ] 
              })   
-        }, 3000);
+        }, 3000); */
+
+        this.fetchData();
+    } 
+
+    fetchData = async () => {
+        this.setState({ 
+            loading: true,
+            error: null 
+        });  
+        
+        try {
+            const data = await api.badges.list();
+            this.setState({
+                loading: false,
+                data: data
+            })
+        } catch(error) {
+            this.setState({
+                loading: false,
+                error: error
+            })
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -72,7 +99,14 @@ class Badges extends React.Component {
     }
 
     render() {
-        console.log('2/4.Render()');
+        if(this.state.loading) {
+            return <PageLoading />
+        }
+
+        if(this.state.error) {
+            return <PageError error={this.state.error} />
+        }
+
         return(
             <React.Fragment>
                 <div className="Badges">
