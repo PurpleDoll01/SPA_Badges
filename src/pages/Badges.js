@@ -6,6 +6,7 @@ import confLogo from '../images/badge-header.svg';
 import BadgesList from '../components/BadgesList';
 import PageLoading from '../components/PageLoading';
 import PageError from '../components/PageError';
+import MiniLoader from '../components/MiniLoader';
 
 import api from '../api';
 
@@ -22,42 +23,9 @@ class Badges extends React.Component {
     }
 
     componentDidMount() {
-
-    /*    this.timeoutId = setTimeout(() => {
-            this.setState ({
-                data: [
-                 {
-                     "id": "d00d3614-101a-44ca-b6c2-0be075aeed3d",
-                     "firstName": "Major",
-                     "lastName": "Rodriguez",
-                     "email": "Ilene66@hotmail.com",
-                     "jobTitle": "Human Research Architect",
-                     "twitter": "MajorRodriguez61545",
-                     "avatarUrl": "https://www.gravatar.com/avatar/d57a8be8cb9219609905da25d5f3e50a?d=identicon"
-                 },
-                 {
-                     "id": "63c03386-33a2-4512-9ac1-354ad7bec5e9",
-                     "firstName": "Daphney",
-                     "lastName": "Torphy",
-                     "email": "Ron61@hotmail.com",
-                     "jobTitle": "National Markets Officer",
-                     "twitter": "DaphneyTorphy96105",
-                     "avatarUrl": "https://www.gravatar.com/avatar/e74e87d40e55b9ff9791c78892e55cb7?d=identicon"
-                 },
-                 {
-                     "id": "a9748581-dfdc-4a78-930d-5205a2ccef48",
-                     "firstName": "Tatyana",
-                     "lastName": "Von",
-                     "email": "Herminio.Schmeler@hotmail.com",
-                     "jobTitle": "Central Branding Representative",
-                     "twitter": "TatyanaVon35871-3686",
-                     "avatarUrl": "https://www.gravatar.com/avatar/98c382edd93414c1649b9db866000f97?d=identicon"
-                 }
-             ] 
-             })   
-        }, 3000); */
-
         this.fetchData();
+
+        this.intervalId = setInterval(this.fetchData, 5000)
     } 
 
     fetchData = async () => {
@@ -96,10 +64,11 @@ class Badges extends React.Component {
         console.log('6. Unmount()');
         clearTimeout(this.timeoutId);
         //FUnción que permite que no marque un error cuando se desmonta un componente que no ha cambiado su estado. Así liberamos memoria.
+        clearInterval(this.intervalId);
     }
 
     render() {
-        if(this.state.loading) {
+        if(this.state.loading && !this.state.data) {
             return <PageLoading />
         }
 
@@ -130,6 +99,7 @@ class Badges extends React.Component {
                     <div className="Badges__list">
                         <div className="Badges__container">
                             <BadgesList badges={this.state.data}/>
+                            {this.state.loading && <MiniLoader />}
                         </div>
                     </div>
                 </div>              
